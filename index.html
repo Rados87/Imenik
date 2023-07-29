@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Imenik</title>
+</head>
+<body>
+    <div id="app">
+        <h1>Imenik</h1>
+        <div>
+            <input type="text" v-model="ime" placeholder="Unesite ime">
+            <input type="text" v-model="brojTelefona" placeholder="Unesite broj telefona">
+            <button @click="dodajUnos">Dodaj</button>
+        </div>
+        <ul>
+            <li v-for="(unos, index) in unosi" :key="index">
+                {{ unos.ime }} - {{ unos.brojTelefona }}
+                <button @click="obrisiUnos(index)">Obriši</button>
+            </li>
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                ime: '',
+                brojTelefona: '',
+                unosi: []
+            },
+            created() {
+                // Učitavanje prethodno sačuvanih zapisa iz LocalStorage-a
+                const savedUnosi = localStorage.getItem('imenik_unosi');
+                if (savedUnosi) {
+                    this.unosi = JSON.parse(savedUnosi);
+                }
+            },
+            methods: {
+                dodajUnos() {
+                    if (this.ime && this.brojTelefona) {
+                        this.unosi.push({ ime: this.ime, brojTelefona: this.brojTelefona });
+                        this.ime = '';
+                        this.brojTelefona = '';
+                        this.sacuvajUnose(); // Čuvanje unosa u LocalStorage
+                    }
+                },
+                obrisiUnos(index) {
+                    this.unosi.splice(index, 1);
+                    this.sacuvajUnose(); // Čuvanje unosa u LocalStorage nakon brisanja
+                },
+                sacuvajUnose() {
+                    // Čuvanje unosa u LocalStorage
+                    localStorage.setItem('imenik_unosi', JSON.stringify(this.unosi));
+                }
+            }
+        });
+    </script>
+</body>
+</html>
